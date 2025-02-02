@@ -18,7 +18,7 @@ public class ItemController {
     private final ItemService service;
 
     @PostMapping
-    public ItemDto Create(@RequestHeader(X_SHARER_USER_ID) long userId, @RequestBody @Valid ItemDto itemDto) {
+    public ItemDto create(@RequestHeader(X_SHARER_USER_ID) long userId, @RequestBody @Valid ItemDto itemDto) {
         return service.create(userId, itemDto);
     }
 
