@@ -9,6 +9,9 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class ItemUpdatingRequest {
+
+    private long userId;
+    private long itemId;
     @NotBlank
     private String name;
     @NotBlank

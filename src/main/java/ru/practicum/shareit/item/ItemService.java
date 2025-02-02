@@ -7,19 +7,19 @@ import ru.practicum.shareit.item.model.ItemUpdatingRequest;
 import java.util.List;
 
 public interface ItemService {
-    ItemDto itemCreate(long userId, ItemDto itemDto);
+    ItemDto create(long userId, ItemDto itemDto);
 
-    ItemDto getItem(long userId, long itemId);
+    ItemDto get(long userId, long itemId);
 
     List<ItemDto> getAll();
 
     List<ItemDto> getAllByUserId(long userId);
 
-    ItemDto updateItem(long userId, long itemId, Item item);
+    ItemDto update(long userId, long itemId, ItemUpdatingRequest itemUpdatingRequest);
 
     Item prepareUpdating(long userId, long itemId, ItemUpdatingRequest itemUpdatingRequest);
 
-    void removeItem(long userId, long itemId);
+    void remove(long userId, long itemId);
 
-    List<ItemDto> searchItems(String searchText);
+    List<ItemDto> search(String searchText);
 }

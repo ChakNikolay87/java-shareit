@@ -19,17 +19,17 @@ public class ItemServiceImpl implements ItemService {
     private final ItemRepository itemRepository;
 
     @Override
-    public ItemDto itemCreate(long userId, ItemDto itemDto) {
-        log.info("Create Item: {}", itemDto);
+    public ItemDto create(long userId, ItemDto itemDto) {
+        log.info("Создание предмета: {}", itemDto);
         userRepository.getUser(userId);
-        return itemRepository.itemCreate(itemDto, userId);
+        return itemRepository.create(itemDto, userId);
     }
 
     @Override
-    public ItemDto getItem(long userId, long itemId) {
+    public ItemDto get(long userId, long itemId) {
         userRepository.getUser(userId);
-        log.info("get Item by Id: {}", itemId);
-        return itemRepository.getItem(itemId);
+        log.info("Получение предмета по Id: {}", itemId);
+        return itemRepository.get(itemId);
     }
 
     @Override
@@ -40,35 +40,38 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public List<ItemDto> getAllByUserId(long userId) {
         userRepository.getUser(userId);
-        log.info("Get all items by user: {}", userId);
-        return itemRepository.findItemByOwnerId(userId);
+        log.info("Получение всех предметов пользователя: {}", userId);
+        return itemRepository.findByOwnerId(userId);
     }
 
     @Override
-    public ItemDto updateItem(long userId, long itemId, Item item) {
-        log.info("Update Item: {}", item);
-        return itemRepository.addUpdatingItem(itemId, item);
+    public ItemDto update(long userId, long itemId, ItemUpdatingRequest itemUpdatingRequest) {
+        log.info("Обновление предмета с запросом: {}", itemUpdatingRequest);
+        Item updatedItem = itemRepository.update(itemUpdatingRequest);
+        return itemRepository.addUpdating(itemId, updatedItem);
     }
 
     @Override
-    public void removeItem(long userId, long itemId) {
+    public void remove(long userId, long itemId) {
         userRepository.getUser(userId);
-        log.info("remove Item: {}", itemId);
-        itemRepository.removeItem(itemId);
+        log.info("Удаление предмета: {}", itemId);
+        itemRepository.remove(itemId);
     }
 
     @Override
-    public List<ItemDto> searchItems(String searchText) {
-        log.info("Search items contain: " + searchText);
+    public List<ItemDto> search(String searchText) {
+        log.info("Поиск предметов, содержащих: {}", searchText);
         if (searchText.isBlank()) {
             return new ArrayList<>();
         } else {
-            return itemRepository.searchItems(searchText);
+            return itemRepository.search(searchText);
         }
     }
 
+    @Override
     public Item prepareUpdating(long userId, long itemId, ItemUpdatingRequest itemUpdatingRequest) {
-        log.info("Preparing Item: {}", itemId);
-        return itemRepository.updateItem(userId, itemId, itemUpdatingRequest);
+        log.info("Подготовка предмета для обновления: {}", itemId);
+        userRepository.getUser(userId);
+        return itemRepository.update(itemUpdatingRequest);
     }
 }

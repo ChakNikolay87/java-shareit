@@ -12,27 +12,26 @@ import java.util.*;
 
 @Repository
 public class ItemRepositoryImpl implements ItemRepository {
-    private final HashMap<Long, Item> items = new HashMap<>();
-
+    private final Map<Long, Item> items = new HashMap<>();
     private long id = 1;
 
     @Override
-    public ItemDto itemCreate(ItemDto itemDto, long userId) {
+    public ItemDto create(ItemDto itemDto, long userId) {
         Item item = ItemMapper.itemDtoToItem(itemDto);
         item.setOwnerId(userId);
         item.setId(getId());
         items.put(item.getId(), item);
-        return ItemMapper.itemToItemDto(items.get(item.getId()));
+        return ItemMapper.itemToItemDto(item);
     }
 
     @Override
-    public ItemDto getItem(long itemId) {
+    public ItemDto get(long itemId) {
         isItemExist(itemId);
         return ItemMapper.itemToItemDto(items.get(itemId));
     }
 
     @Override
-    public List<ItemDto> findItemByOwnerId(long userId) {
+    public List<ItemDto> findByOwnerId(long userId) {
         List<ItemDto> itemList = new ArrayList<>();
         items.forEach((key, value) -> {
             if (value.getOwnerId() == userId) {
@@ -42,7 +41,6 @@ public class ItemRepositoryImpl implements ItemRepository {
         return Collections.unmodifiableList(itemList);
     }
 
-
     @Override
     public List<ItemDto> getAll() {
         List<ItemDto> itemList = new ArrayList<>();
@@ -51,73 +49,74 @@ public class ItemRepositoryImpl implements ItemRepository {
     }
 
     @Override
-    public ItemDto addUpdatingItem(long itemId, Item item) {
+    public ItemDto addUpdating(long itemId, Item item) {
+        item.setId(itemId);
         items.put(itemId, item);
-        return ItemMapper.itemToItemDto(items.get(item.getId()));
+        return ItemMapper.itemToItemDto(item);
     }
 
     @Override
-    public Item updateItem(long userId, long itemId, ItemUpdatingRequest itemUpdatingRequest) {
+    public Item update(ItemUpdatingRequest itemUpdatingRequest) {
+        long itemId = itemUpdatingRequest.getItemId();
+        long userId = itemUpdatingRequest.getUserId();
+
         isItemExist(itemId);
         checkOwner(userId, itemId);
-        Item item = items.get(itemId);
-        Optional<String> name = Optional.ofNullable(itemUpdatingRequest.getName());
-        Optional<String> description = Optional.ofNullable(itemUpdatingRequest.getDescription());
-        Optional<Boolean> available = Optional.ofNullable(itemUpdatingRequest.getAvailable());
 
-        if (name.isEmpty() && description.isEmpty() && available.isEmpty()) {
+        Item item = items.get(itemId);
+
+        if (itemUpdatingRequest.getName() == null && itemUpdatingRequest.getDescription() == null && itemUpdatingRequest.getAvailable() == null) {
             throw new ValidationException("At least one field for update should be provided.");
         }
-        name.ifPresent(n -> {
-            if (!n.isBlank()) {
-                item.setName(n);
-            }
-        });
 
-        description.ifPresent(d -> {
-            if (!d.isBlank()) {
-                item.setDescription(d);
-            }
-        });
+        Optional.ofNullable(itemUpdatingRequest.getName())
+                .filter(n -> !n.isBlank())
+                .ifPresent(item::setName);
 
-        available.ifPresent(item::setAvailable);
+        Optional.ofNullable(itemUpdatingRequest.getDescription())
+                .filter(d -> !d.isBlank())
+                .ifPresent(item::setDescription);
+
+        Optional.ofNullable(itemUpdatingRequest.getAvailable())
+                .ifPresent(item::setAvailable);
 
         return item;
     }
 
     @Override
-    public boolean removeItem(long itemId) {
+    public boolean remove(long itemId) {
         return items.remove(itemId) != null;
     }
 
     @Override
-    public List<ItemDto> searchItems(String searchText) {
+    public List<ItemDto> search(String searchText) {
         List<ItemDto> itemList = new ArrayList<>();
         String searchTextLower = searchText.toLowerCase();
 
         items.forEach((key, value) -> {
-            if (value.getAvailable() && (value.getName().toLowerCase().contains(searchTextLower) || value.getDescription().toLowerCase().contains(searchTextLower))) {
+            if (value.getAvailable() &&
+                    (value.getName().toLowerCase().contains(searchTextLower) || value.getDescription().toLowerCase().contains(searchTextLower))) {
                 itemList.add(ItemMapper.itemToItemDto(value));
             }
         });
 
-        return Collections.unmodifiableList(itemList);
+        return itemList;
+    }
+
+    private long getId() {
+        return id++;
     }
 
     private void isItemExist(long itemId) {
         if (!items.containsKey(itemId)) {
-            throw new NotFoundException("User should be owner");
+            throw new NotFoundException("Item not found with ID: " + itemId);
         }
     }
 
     private void checkOwner(long userId, long itemId) {
-        if (!(items.get(itemId).getOwnerId() == userId)) {
-            throw new NotFoundException(String.format("User: %d isn't the owner by item: %d", userId, itemId));
-
+        Item item = items.get(itemId);
+        if (item == null || item.getOwnerId() != userId) {
+            throw new ValidationException("You do not have permission to update this item.");
         }
-    }
-
-    private long getId() {
-        return this.id++;
     }
 }

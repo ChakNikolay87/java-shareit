@@ -18,13 +18,13 @@ public class ItemController {
     private final ItemService service;
 
     @PostMapping
-    public ItemDto itemCreate(@RequestHeader(X_SHARER_USER_ID) long userId, @RequestBody @Valid ItemDto itemDto) {
-        return service.itemCreate(userId, itemDto);
+    public ItemDto Create(@RequestHeader(X_SHARER_USER_ID) long userId, @RequestBody @Valid ItemDto itemDto) {
+        return service.create(userId, itemDto);
     }
 
     @GetMapping("/{itemId}")
-    public ItemDto getItem(@RequestHeader(X_SHARER_USER_ID) long userId, @PathVariable long itemId) {
-        return service.getItem(userId, itemId);
+    public ItemDto get(@RequestHeader(X_SHARER_USER_ID) long userId, @PathVariable long itemId) {
+        return service.get(userId, itemId);
     }
 
     @GetMapping("/all")
@@ -38,20 +38,24 @@ public class ItemController {
     }
 
     @PatchMapping("/{itemId}")
-    public ItemDto updateItem(@RequestHeader(X_SHARER_USER_ID) long userId, @PathVariable long itemId,
-                              @RequestBody ItemUpdatingRequest itemUpdatingRequest) {
+    public ItemDto update(@RequestHeader(X_SHARER_USER_ID) long userId,
+                          @PathVariable long itemId,
+                          @RequestBody ItemUpdatingRequest itemUpdatingRequest) {
+        itemUpdatingRequest.setItemId(itemId);
+        itemUpdatingRequest.setUserId(userId);
+
         Item item = service.prepareUpdating(userId, itemId, itemUpdatingRequest);
-        return service.updateItem(userId, itemId, item);
+
+        return service.update(userId, itemId, itemUpdatingRequest);
     }
 
     @DeleteMapping("/{itemId}")
-    public void removeItem(@RequestHeader(X_SHARER_USER_ID) long userId, @PathVariable long itemId) {
-        service.removeItem(userId, itemId);
+    public void remove(@RequestHeader(X_SHARER_USER_ID) long userId, @PathVariable long itemId) {
+        service.remove(userId, itemId);
     }
 
     @GetMapping("/search")
-    public List<ItemDto> searchItems(@RequestParam String text) {
-        return service.searchItems(text);
+    public List<ItemDto> search(@RequestParam String text) {
+        return service.search(text);
     }
-
 }
