@@ -11,7 +11,7 @@ import java.util.*;
 
 @Repository
 public class UserRepositoryImpl implements UserRepository {
-    private final HashMap<Long, User> users = new HashMap<>();
+    private final Map<Long, User> users = new HashMap<>();
     private long id = 1;
 
     @Override
@@ -29,12 +29,15 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public User userCreate(User user) {
-        if (isNotConflictEmail(user.getEmail())) {
-            User newUser = createUser(user);
-            users.put(newUser.getId(), newUser);
-            return users.get(newUser.getId());
-        } else return null;
+        if (!isNotConflictEmail(user.getEmail())) {
+            throw new ConflictException("Пользователь с таким email уже существует: " + user.getEmail());
+        }
+
+        User newUser = createUser(user);
+        users.put(newUser.getId(), newUser);
+        return newUser;
     }
+
 
     @Override
     public User addUpdatingUser(long userId, User user) {
@@ -46,26 +49,23 @@ public class UserRepositoryImpl implements UserRepository {
     public User updateUser(long userId, UserUpdateRequest userUpdateRequest) {
         isUserExist(userId);
         User updateUser = users.get(userId);
-        Optional<String> name = Optional.ofNullable(userUpdateRequest.getName());
-        Optional<String> email = Optional.ofNullable(userUpdateRequest.getEmail());
 
-        if (name.isEmpty() && email.isEmpty()) {
+        String newName = userUpdateRequest.getName();
+        String newEmail = userUpdateRequest.getEmail();
+
+        if ((newName == null || newName.isBlank()) && (newEmail == null || newEmail.isBlank())) {
             throw new ValidationException("At least one field for update should be provided.");
         }
 
-        name.ifPresent(n -> {
-            if (!n.isBlank()) {
-                updateUser.setName(n);
-            }
-        });
+        if (newName != null && !newName.isBlank()) {
+            updateUser.setName(newName);
+        }
 
-        email.ifPresent(e -> {
-            if (!e.isBlank()) {
-                if (isNotConflictEmail(e, userId)) {
-                    updateUser.setEmail(e);
-                }
+        if (newEmail != null && !newEmail.isBlank()) {
+            if (isNotConflictEmail(newEmail, userId)) {
+                updateUser.setEmail(newEmail);
             }
-        });
+        }
 
         return updateUser;
     }

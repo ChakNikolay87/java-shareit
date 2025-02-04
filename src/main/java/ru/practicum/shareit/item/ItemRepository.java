@@ -7,7 +7,7 @@ import ru.practicum.shareit.item.model.ItemUpdatingRequest;
 import java.util.List;
 
 public interface ItemRepository {
-    ItemDto create(ItemDto itemDto, long userId);
+    Item create(Item item, long userId);
 
     ItemDto get(long itemId);
 

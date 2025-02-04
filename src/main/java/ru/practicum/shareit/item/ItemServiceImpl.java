@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.item.model.ItemMapper;
 import ru.practicum.shareit.item.model.ItemUpdatingRequest;
 import ru.practicum.shareit.user.UserRepository;
 
@@ -22,8 +23,12 @@ public class ItemServiceImpl implements ItemService {
     public ItemDto create(long userId, ItemDto itemDto) {
         log.info("Создание предмета: {}", itemDto);
         userRepository.getUser(userId);
-        return itemRepository.create(itemDto, userId);
+        Item item = ItemMapper.itemDtoToItem(itemDto);
+        item.setOwnerId(userId);
+        Item savedItem = itemRepository.create(item, userId);
+        return ItemMapper.itemToItemDto(savedItem);
     }
+
 
     @Override
     public ItemDto get(long userId, long itemId) {

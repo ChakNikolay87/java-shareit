@@ -16,13 +16,13 @@ public class ItemRepositoryImpl implements ItemRepository {
     private long id = 1;
 
     @Override
-    public ItemDto create(ItemDto itemDto, long userId) {
-        Item item = ItemMapper.itemDtoToItem(itemDto);
+    public Item create(Item item, long userId) {
+        item.setId(id++);
         item.setOwnerId(userId);
-        item.setId(getId());
         items.put(item.getId(), item);
-        return ItemMapper.itemToItemDto(item);
+        return item;
     }
+
 
     @Override
     public ItemDto get(long itemId) {
