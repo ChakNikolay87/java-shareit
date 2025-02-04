@@ -1,24 +1,21 @@
-package ru.practicum.shareit.item.dto;
+package ru.practicum.shareit.item.model;
 
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
+import jdk.jfr.BooleanFlag;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.Getter;
+
 
 @Data
 @AllArgsConstructor
-public class ItemDto {
+public class ItemUpdatingRequest {
 
-    private long id;
+    private long userId;
+    private long itemId;
     @NotBlank
-
     private String name;
     @NotBlank
-
     private String description;
-
-    @NotNull
-    @Getter
+    @BooleanFlag
     private Boolean available;
 }
