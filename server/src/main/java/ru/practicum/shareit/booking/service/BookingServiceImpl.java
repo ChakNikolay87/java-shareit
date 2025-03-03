@@ -69,6 +69,7 @@ public class BookingServiceImpl implements BookingService {
         Booking savedBooking = bookingRepository.save(booking);
         return BookingMapper.toBookingDto(savedBooking);
     }
+    
     @Override
     @Transactional
     public BookingDto approveBooking(Long ownerId, Long bookingId, boolean approved) {
