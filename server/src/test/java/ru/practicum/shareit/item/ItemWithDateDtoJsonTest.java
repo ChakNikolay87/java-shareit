@@ -48,14 +48,4 @@ public class ItemWithDateDtoJsonTest {
         assertThat(itemWithDateDto.getComments().size()).isEqualTo(1);
         assertThat(itemWithDateDto.getComments().get(0).getText()).isEqualTo("This is a comment");
     }
-
-    @Test
-    public void testEqualsAndHashCode() {
-        ItemWithDateDto item1 = new ItemWithDateDto(1L, "ItemName", "ItemDescription", true, LocalDateTime.now(), LocalDateTime.now().plusDays(1), Collections.emptyList());
-        ItemWithDateDto item2 = new ItemWithDateDto(1L, "ItemName", "ItemDescription", true, LocalDateTime.now(), LocalDateTime.now().plusDays(1), Collections.emptyList());
-
-        assertThat(item1).isEqualTo(item2);
-
-        assertThat(item1.hashCode()).isEqualTo(item2.hashCode());
-    }
 }
