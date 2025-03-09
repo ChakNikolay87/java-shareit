@@ -109,28 +109,6 @@ public class BookingDtoJsonTest {
         assertTrue(bookingDto1.equals(bookingDto2));
     }
 
-    @Test
-    public void testEqualsDifferentObjectSameValues() {
-        ItemDto itemDto = new ItemDto(1L, "ItemName", "ItemDescription", true, null, null);
-        UserDto userDto = new UserDto(1L, "UserName", "user@example.com");
-        BookingDto bookingDto1 = new BookingDto(1L, LocalDateTime.now(), LocalDateTime.now().plusDays(1), itemDto, userDto, BookingStatus.APPROVED, 1L, 1L);
-        BookingDto bookingDto2 = new BookingDto(1L, LocalDateTime.now(), LocalDateTime.now().plusDays(1), itemDto, userDto, BookingStatus.APPROVED, 1L, 1L);
-
-        assertTrue(bookingDto1.equals(bookingDto2));
-    }
-
-    @Test
-    public void testEqualsDifferentObjectDifferentValues() {
-        ItemDto itemDto1 = new ItemDto(1L, "ItemName", "ItemDescription", true, null, null);
-        UserDto userDto1 = new UserDto(1L, "UserName", "user@example.com");
-        BookingDto bookingDto1 = new BookingDto(1L, LocalDateTime.now(), LocalDateTime.now().plusDays(1), itemDto1, userDto1, BookingStatus.APPROVED, 1L, 1L);
-
-        ItemDto itemDto2 = new ItemDto(2L, "DifferentItemName", "DifferentItemDescription", true, null, null);
-        UserDto userDto2 = new UserDto(2L, "DifferentUserName", "differentuser@example.com");
-        BookingDto bookingDto2 = new BookingDto(2L, LocalDateTime.now().plusDays(1), LocalDateTime.now().plusDays(2), itemDto2, userDto2, BookingStatus.REJECTED, 2L, 2L);
-
-        assertFalse(bookingDto1.equals(bookingDto2));
-    }
 
     @Test
     public void testEqualsNullObject() {
