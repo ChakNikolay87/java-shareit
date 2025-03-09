@@ -31,7 +31,7 @@ public class ItemRequestDtoJsonTest {
                 "\"description\":\"Request description\"",
                 "\"requestor\":1",
                 "\"created\"",
-                "\"items\":[" ,
+                "\"items\":[",
                 "\"id\":1",
                 "\"name\":\"ItemName\"",
                 "\"description\":\"ItemDescription\""
